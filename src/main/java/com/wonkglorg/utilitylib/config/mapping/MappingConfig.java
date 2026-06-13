@@ -85,7 +85,11 @@ public class MappingConfig extends Config{
 				}
 			}
 			
-			result.add(new LangMapping(plugin, Path.of(pathString.replace("%plugin-dir%", "")), outputPath, locales));
+			String resource = pathString.replace("%plugin-dir%", "").replaceFirst("^[/\\\\]+", "");
+			
+			Path resourcePath = Path.of(resource);
+			
+			result.add(new LangMapping(plugin, resourcePath, outputPath, locales));
 		}
 		
 		return result;
