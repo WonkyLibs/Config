@@ -1,7 +1,7 @@
-package com.wonkglorg.utilitylib.config.mapping;
+package com.wonkglorg.minecraft.config.mapping;
 
-import com.wonkglorg.utilitylib.config.provider.ResourceProvider;
-import com.wonkglorg.utilitylib.config.types.Config;
+import com.wonkglorg.minecraft.config.provider.ResourceProvider;
+import com.wonkglorg.minecraft.config.types.Config;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 

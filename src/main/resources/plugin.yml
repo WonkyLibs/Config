@@ -1,5 +1,7 @@
-name: UtilityLibConfig
-version: 1.0
-main: com.wonkglorg.utilitylib.config.Main
-api-version: 1.21.11
+main: com.wonkglorg.minecraft.config.Main
+name: ${name}
+description: ${description}
+author: ${author}
+version: ${version}
+api-version: ${api_version}
 folia-supported: true

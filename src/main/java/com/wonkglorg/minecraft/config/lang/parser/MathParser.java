@@ -1,4 +1,4 @@
-package com.wonkglorg.utilitylib.config.lang.parser;
+package com.wonkglorg.minecraft.config.lang.parser;
 
 public final class MathParser{
 	

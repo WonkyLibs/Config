@@ -1,7 +1,7 @@
-package com.wonkglorg.utilitylib.config.types;
+package com.wonkglorg.minecraft.config.types;
 
-import com.wonkglorg.utilitylib.config.provider.PluginResourceProvider;
-import com.wonkglorg.utilitylib.config.provider.ResourceProvider;
+import com.wonkglorg.minecraft.config.provider.PluginResourceProvider;
+import com.wonkglorg.minecraft.config.provider.ResourceProvider;
 import lombok.Setter;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;

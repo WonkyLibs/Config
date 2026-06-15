@@ -1,4 +1,4 @@
-package com.wonkglorg.utilitylib.config.lang.parser.bool;
+package com.wonkglorg.minecraft.config.lang.parser.bool;
 
 import java.util.ArrayList;
 import java.util.List;

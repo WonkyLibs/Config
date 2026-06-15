@@ -1,10 +1,10 @@
-package com.wonkglorg.utilitylib.config;
+package com.wonkglorg.minecraft.config;
 
-import com.wonkglorg.utilitylib.config.lang.LangRequest;
-import com.wonkglorg.utilitylib.config.mapping.MappingConfig;
-import com.wonkglorg.utilitylib.config.provider.PluginResourceProvider;
-import com.wonkglorg.utilitylib.config.types.Config;
-import com.wonkglorg.utilitylib.config.types.LangConfig;
+import com.wonkglorg.minecraft.config.lang.LangRequest;
+import com.wonkglorg.minecraft.config.mapping.MappingConfig;
+import com.wonkglorg.minecraft.config.provider.PluginResourceProvider;
+import com.wonkglorg.minecraft.config.types.Config;
+import com.wonkglorg.minecraft.config.types.LangConfig;
 import lombok.Getter;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;

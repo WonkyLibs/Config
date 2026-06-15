@@ -1,8 +1,9 @@
 package com.wonkglorg.utilitylib.config.lang;
 
-import com.wonkglorg.utilitylib.config.LangManager;
-import com.wonkglorg.utilitylib.config.mapping.MappingConfig;
-import com.wonkglorg.utilitylib.config.types.LangConfig;
+import com.wonkglorg.minecraft.config.LangManager;
+import com.wonkglorg.minecraft.config.lang.LangRequest;
+import com.wonkglorg.minecraft.config.mapping.MappingConfig;
+import com.wonkglorg.minecraft.config.types.LangConfig;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;

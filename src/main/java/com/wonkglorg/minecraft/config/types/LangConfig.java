@@ -1,6 +1,6 @@
-package com.wonkglorg.utilitylib.config.types;
+package com.wonkglorg.minecraft.config.types;
 
-import com.wonkglorg.utilitylib.config.provider.ResourceProvider;
+import com.wonkglorg.minecraft.config.provider.ResourceProvider;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.configuration.InvalidConfigurationException;
