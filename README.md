@@ -39,7 +39,7 @@ Can either be compileOnly (if UtilityLib-Config is installed as a plugin on the 
 implementation
 
 ```groovy
-compileOnly 'com.github.WonkyPlugins:UtilityLib-Config:<version>'
+compileOnly 'com.github.WonkyLibs:Config:<version>'
 ```
 
 ## <a name="overview"></a>Overview
@@ -70,7 +70,7 @@ new Config(Path.of("subdirectory", "items.yml"), ()-> this.getClass().getClassLo
 The Langmanager handles any defined langconfigs to find the best match based on the Locale provided. Langconfigs are defined
 inside:
 
-`plugin-datafolder/utility-lib/config/mappings.yml` this file will be automatically created on plugin startup.
+`plugin-datafolder/wonky-lib/config/mappings.yml` this file will be automatically created on plugin startup.
 
 ```yml
 lang:
@@ -79,7 +79,7 @@ lang:
     - path: test/lang/en.yml
       locales:
         - en
-    - path: test/lang/de.yml
+    - path: %plugin-dir%/test/lang/de.yml
       locales:
         - de
         - de_AT

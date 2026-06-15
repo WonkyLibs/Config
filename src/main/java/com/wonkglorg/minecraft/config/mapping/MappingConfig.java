@@ -16,7 +16,7 @@ public class MappingConfig extends Config{
 	/**
 	 * Where the file to configure the lang manager is located
 	 */
-	private static final Path CONFIG_MAPPINGS_PATH = Path.of("utility-lib", "config", "mappings.yml");
+	private static final Path CONFIG_MAPPINGS_PATH = Path.of("wonky-lib", "config", "mappings.yml");
 	private final Plugin plugin;
 	
 	public MappingConfig(@NotNull Path path, @NotNull ResourceProvider resourceProvider) {
