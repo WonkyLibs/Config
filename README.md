@@ -193,7 +193,7 @@ An IntelliJ Jetbrains plugin is available to provide better integration with the
 
 ## Download
 
-[https://github.com/Wonkglorg/UtilityLibConfig-IntellijPlugin](https://github.com/WonkyLibs/Config-IntelliJ-Plugin)
+https://github.com/WonkyLibs/Config-IntelliJ-Plugin
 
 ### Installation 
 
