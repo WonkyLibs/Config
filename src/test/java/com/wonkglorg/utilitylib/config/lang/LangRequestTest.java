@@ -81,8 +81,7 @@ class LangRequestTest{
 		//locale replacements take priority
 		assertEquals("We are using Yen", lang.request("placeholder.single").replace("%euro%", "Yen").toSingleStringResult());
 		
-		
-		assertEquals("I am Steve",lang.literal("I am %name%").lazyReplace("%name%",()-> "Steve").toSingleStringResult());
+		assertEquals("I am Steve", LangRequest.literal("I am %name%").lazyReplace("%name%", () -> "Steve").toSingleStringResult());
 	}
 	
 	@Test

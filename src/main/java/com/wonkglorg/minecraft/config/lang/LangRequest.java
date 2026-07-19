@@ -93,6 +93,24 @@ public class LangRequest{
 		this.defaultValue = defaultValue;
 	}
 	
+	private LangRequest(String literal) {
+		logger = Logger.getLogger(LangRequest.class.getName());
+		this.langManager = null;
+		this.locale = Locale.ENGLISH;
+		this.key = literal;
+		this.defaultValue = literal;
+		isLiteralKey = true;
+	}
+	
+	/**
+	 * Creates a literal lang value to be evaluated
+	 *
+	 * @param literal the literal key
+	 */
+	public static LangRequest literal(String literal) {
+		return new LangRequest(literal);
+	}
+	
 	public LangRequest(LangManager langManager, String literal) {
 		logger = langManager.getLogger();
 		this.locale = Locale.ENGLISH;
@@ -248,6 +266,9 @@ public class LangRequest{
 	 * @return the string or first entry of the list from the config without any modifications
 	 */
 	public String getRawResultSingleLine(Locale locale) {
+		if(isLiteralKey){
+			return defaultValue;
+		}
 		LangConfig config;
 		var configOptional = langManager.getAnyValidLangConfig(locale);
 		if(configOptional.isPresent()){

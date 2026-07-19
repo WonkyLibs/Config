@@ -215,16 +215,6 @@ public final class LangManager{
 	}
 	
 	/**
-	 * A literal message to be modified
-	 *
-	 * @param value the message
-	 * @return a lang request containing this message
-	 */
-	public LangRequest literal(String value) {
-		return new LangRequest(this, value);
-	}
-	
-	/**
 	 * Gets any valid language config to use (first checks if the locale is present, then the default locale, then any locale)
 	 *
 	 * @param locale the locale to get the language config for
