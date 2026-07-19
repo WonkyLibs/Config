@@ -1,8 +1,8 @@
 package com.wonkglorg.minecraft.config.lang;
 
 import com.wonkglorg.minecraft.config.LangManager;
-import com.wonkglorg.minecraft.config.lang.parser.bool.BooleanConditionParser;
 import com.wonkglorg.minecraft.config.lang.parser.MathParser;
+import com.wonkglorg.minecraft.config.lang.parser.bool.BooleanConditionParser;
 import com.wonkglorg.minecraft.config.types.LangConfig;
 import lombok.Getter;
 import net.kyori.adventure.audience.Audience;
@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -57,7 +58,15 @@ public class LangRequest{
 	 */
 	private final Map<String, String> replacements = new HashMap<>();
 	
-	private final Map<String, Component> componentReplacements = new HashMap<>();
+	/**
+	 * Replaces that only compute when they are needed
+	 */
+	private final Map<String, Supplier<String>> lazyReplacements = new HashMap<>();
+	
+	/**
+	 * Component replacements
+	 */
+	private final Map<String, Supplier<Component>> componentReplacements = new HashMap<>();
 	/**
 	 * Pattern for component replacers
 	 */
@@ -145,13 +154,30 @@ public class LangRequest{
 		return replace(value, String.valueOf(replacement));
 	}
 	
-	public LangRequest replace(String value, Component replacement) {
+	/**
+	 * Replaces the given value with the replacement, only computes when needed
+	 *
+	 * @param key the key to replace
+	 * @param replacement the value to replace it with
+	 */
+	public LangRequest replace(String key, Supplier<Component> replacement) {
 		if(replacement == null){
 			return this;
 		}
 		//invalidate pattern if one was already generated
 		pattern = null;
-		componentReplacements.put(value, replacement);
+		componentReplacements.put(key, replacement);
+		return this;
+	}
+	
+	/**
+	 * Replaces the given value with the replacement, only computes when needed (if a same key has been defined in {@link #replace(String, String)} it takes priority over this one
+	 *
+	 * @param key the key to replace
+	 * @param supplier the value to replace it with
+	 */
+	public LangRequest lazyReplace(String key, Supplier<String> supplier) {
+		lazyReplacements.put(key, supplier);
 		return this;
 	}
 	
@@ -249,6 +275,9 @@ public class LangRequest{
 	 * @return any math operations resolved on this input
 	 */
 	private String applyMath(String input) {
+		if(!input.contains("<math>")){
+			return input;
+		}
 		Matcher matcher = MATH_PATTERN.matcher(input);
 		StringBuilder builder = new StringBuilder();
 		
@@ -297,6 +326,12 @@ public class LangRequest{
 				input = input.replace(replacement.getKey(), replacement.getValue());
 			}
 		}
+		//per request replacers lazy
+		for(var replacement : lazyReplacements.entrySet()){
+			if(input.contains(replacement.getKey())){
+				input = input.replace(replacement.getKey(), replacement.getValue().get());
+			}
+		}
 		
 		//per lang replacers
 		if(lastAccessedConfig != null){
@@ -327,8 +362,8 @@ public class LangRequest{
 			}
 			
 			String componentKey = matcher.group();
-			subComponents.add(componentReplacements.getOrDefault(componentKey, toComponent.apply(componentKey)));
-			
+			Supplier<Component> supplier = componentReplacements.get(componentKey);
+			subComponents.add(supplier != null ? supplier.get() : toComponent.apply(componentKey));
 			last = matcher.end();
 		}
 		
@@ -472,7 +507,16 @@ public class LangRequest{
 		}
 		
 		if(pattern == null){
-			pattern = Pattern.compile(componentReplacements.keySet().stream().map(Pattern::quote).collect(Collectors.joining("|")));
+			StringBuilder regex = new StringBuilder();
+			
+			for(String key : componentReplacements.keySet()){
+				if(!regex.isEmpty()){
+					regex.append('|');
+				}
+				regex.append(Pattern.quote(key));
+			}
+			
+			pattern = Pattern.compile(regex.toString());
 		}
 		
 		for(var resultValue : results){
@@ -508,7 +552,6 @@ public class LangRequest{
 	/**
 	 * @return the output as a component
 	 */
-	
 	public List<Component> toComponent() {
 		return toComponent(MINI_MESSAGE::deserialize);
 	}

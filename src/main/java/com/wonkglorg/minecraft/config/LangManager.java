@@ -151,7 +151,7 @@ public final class LangManager{
 		for(var entry : mappingConfig.getPaths()){
 			LangConfig config;
 			if(entry.plugin() != null){
-				config = new LangConfig(entry.outputPath(),new PluginResourceProvider(entry.plugin(),entry.resourcePath()));
+				config = new LangConfig(entry.outputPath(), new PluginResourceProvider(entry.plugin(), entry.resourcePath()));
 			} else {
 				config = new LangConfig(entry.outputPath(),
 						() -> this.getClass().getClassLoader().getResourceAsStream(entry.resourcePath().toString().replace(File.separatorChar, '/')));
@@ -212,6 +212,16 @@ public final class LangManager{
 	 */
 	public LangRequest request(final Locale locale, final String key, final String defaultValue) {
 		return new LangRequest(this, locale, key, defaultValue);
+	}
+	
+	/**
+	 * A literal message to be modified
+	 *
+	 * @param value the message
+	 * @return a lang request containing this message
+	 */
+	public LangRequest literal(String value) {
+		return new LangRequest(this, defaultLang, value, value);
 	}
 	
 	/**
