@@ -130,9 +130,21 @@ public class LangRequest{
 	 */
 	public LangRequest replace(String value, String replacement) {
 		if(replacement == null){
-			replacement = "null";
+			replacement = "";
 		}
 		replacements.put(value, replacement);
+		return this;
+	}
+	
+	/**
+	 * Replaces the given value with its replacement
+	 */
+	public LangRequest replace(String value, Object replacement) {
+		if(replacement == null){
+			replacements.put(value, "");
+			return this;
+		}
+		replacements.put(value, String.valueOf(replacement));
 		return this;
 	}
 	
