@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.logging.Level;
@@ -380,7 +381,8 @@ public class LangRequest{
 		//per request replacers lazy
 		for(var replacement : lazyReplacements.entrySet()){
 			if(input.contains(replacement.getKey())){
-				input = input.replace(replacement.getKey(), replacement.getValue().get());
+				String value = replacement.getValue().get();
+				input = input.replace(replacement.getKey(), Objects.requireNonNullElse(value, ""));
 			}
 		}
 		
@@ -414,7 +416,12 @@ public class LangRequest{
 			
 			String componentKey = matcher.group();
 			Supplier<Component> supplier = componentReplacements.get(componentKey);
-			subComponents.add(supplier != null ? supplier.get() : toComponent.apply(componentKey));
+			if(supplier != null){
+				Component component = supplier.get();
+				subComponents.add(Objects.requireNonNullElseGet(component, Component::empty));
+			} else {
+				subComponents.add(toComponent.apply(componentKey));
+			}
 			last = matcher.end();
 		}
 		
