@@ -221,7 +221,7 @@ public final class LangManager{
 	 * @return a lang request containing this message
 	 */
 	public LangRequest literal(String value) {
-		return new LangRequest(this, defaultLang, value, value);
+		return new LangRequest(this, value);
 	}
 	
 	/**

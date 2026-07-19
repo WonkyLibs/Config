@@ -80,6 +80,10 @@ public class LangRequest{
 	 * Weather or not the initially provided locale should be forced. If false certain methods may re request the message in the given language such as {@link #sendToAudience(Audience)}
 	 */
 	private boolean forceLocale = false;
+	/**
+	 * If the provided key is meant to be a config entry key or a literal value
+	 */
+	private boolean isLiteralKey = false;
 	
 	public LangRequest(LangManager langManager, Locale locale, String key, String defaultValue) {
 		logger = langManager.getLogger();
@@ -87,6 +91,15 @@ public class LangRequest{
 		this.locale = locale;
 		this.key = key;
 		this.defaultValue = defaultValue;
+	}
+	
+	public LangRequest(LangManager langManager, String literal) {
+		logger = langManager.getLogger();
+		this.locale = Locale.ENGLISH;
+		this.langManager = langManager;
+		this.key = literal;
+		this.defaultValue = literal;
+		isLiteralKey = true;
 	}
 	
 	public LangRequest forceLocale(boolean forceLocale) {
@@ -192,6 +205,11 @@ public class LangRequest{
 	 * @return the raw value found in the config without any modifications
 	 */
 	public List<String> getRawResult(Locale locale) {
+		if(isLiteralKey){
+			List<String> arrayList = new ArrayList<>();
+			arrayList.add(defaultValue);
+			return arrayList;
+		}
 		LangConfig config;
 		var configOptional = langManager.getAnyValidLangConfig(locale);
 		if(configOptional.isPresent()){
