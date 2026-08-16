@@ -12,14 +12,21 @@ public final class BooleanConditionParser{
 	}
 	
 	public boolean parse() {
-		return parseOr();
+		boolean result = parseOr();
+		
+		if(peek().type() != TokenType.EOF){
+			throw new IllegalStateException("Unexpected token: " + peek().type() + " (" + peek().text() + ")");
+		}
+		
+		return result;
 	}
 	
 	private boolean parseOr() {
 		boolean result = parseAnd();
 		
 		while(match(TokenType.OR)){
-			result = result || parseAnd();
+			boolean right = parseAnd();
+			result = result || right;
 		}
 		
 		return result;
@@ -29,7 +36,8 @@ public final class BooleanConditionParser{
 		boolean result = parseFactor();
 		
 		while(match(TokenType.AND)){
-			result = result && parseFactor();
+			boolean right = parseFactor();
+			result = result && right;
 		}
 		
 		return result;
@@ -51,31 +59,31 @@ public final class BooleanConditionParser{
 	}
 	
 	private boolean parseValue() {
-		
 		Token left = next();
+		
 		if(left.type() == TokenType.EOF){
-			return false;
+			throw new IllegalStateException("Expected value but found EOF");
 		}
 		
 		Token op = peek();
 		
 		if(isOperator(op.type())){
-			next(); // consume operator
+			next();
 			
 			Token right = next();
+			
 			if(right.type() == TokenType.EOF){
-				return false;
+				throw new IllegalStateException("Expected value after " + op.text() + " but found EOF");
 			}
 			
 			return evaluate(left.text(), op.type(), right.text());
 		}
 		
-		// interpret literal
 		if(left.type() == TokenType.IDENTIFIER || left.type() == TokenType.NUMBER){
 			return Boolean.parseBoolean(left.text());
 		}
 		
-		return false;
+		throw new IllegalStateException("Unexpected token: " + left.type() + " (" + left.text() + ")");
 	}
 	
 	private boolean evaluate(String left, TokenType op, String right) {

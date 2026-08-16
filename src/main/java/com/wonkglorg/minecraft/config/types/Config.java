@@ -18,11 +18,14 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * @author Wonkglorg
@@ -229,6 +232,20 @@ public class Config extends YamlConfiguration{
 				}
 			}
 		}
+	}
+	
+	/**
+	 * Gets a list of Itemstack
+	 * @param path the path to the list
+	 * @return an empty list if not present or a filled list
+	 */
+	public List<ItemStack> getItemStackList(String path) {
+		List<?> list = getList(path);
+		if(list == null){
+			return new ArrayList<>();
+		}
+		
+		return list.stream().filter(ItemStack.class::isInstance).map(ItemStack.class::cast).collect(Collectors.toCollection(ArrayList::new));
 	}
 	
 	@Override

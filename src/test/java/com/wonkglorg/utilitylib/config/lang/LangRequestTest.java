@@ -4,12 +4,15 @@ import com.wonkglorg.minecraft.config.LangManager;
 import com.wonkglorg.minecraft.config.lang.LangRequest;
 import com.wonkglorg.minecraft.config.mapping.MappingConfig;
 import com.wonkglorg.minecraft.config.types.LangConfig;
+import net.kyori.adventure.text.Component;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Path;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -195,6 +198,23 @@ class LangRequestTest{
 		test("math.number-add-negative", "-8");
 		//test("math.nested", "6");
 		test("math.invalid", "!INVALID_OPERATION!");
+	}
+	
+	@Test
+	void testLexerIdentifier() {
+		List<Component> lines = new ArrayList<>(4);
+		for(var i = 1; i < 5; i++){
+			//@formatter:off
+			LangRequest request = lang.request("sign.text.SELL.normal." + i);
+			
+			request.replace("%item%",Component.text("Diamond Sword"))
+			       .replace("%amount%",5)
+			       .replace("%price%",new DecimalFormat("0.##").format(2.0))
+			       .replace("%owner%",Component.text("Wonkglorg"))
+				   .replace("%barter-item%",Component.text("Diamond"));
+			lines.add(request.toSingleComponent());
+			//@formatter:on
+		}
 	}
 	
 	private void test(String key, String expectedResult) {
