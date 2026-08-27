@@ -141,12 +141,11 @@ public class LangRequest{
 	/**
 	 * Replaces the given value with its replacement
 	 */
-	public LangRequest replace(String value, Object replacement) {
+	public LangRequest replace(String value, Component replacement) {
 		if(replacement == null){
-			replacements.put(value, "");
 			return this;
 		}
-		replacements.put(value, String.valueOf(replacement));
+		componentReplacements.put(value, () -> replacement);
 		return this;
 	}
 	
