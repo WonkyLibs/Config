@@ -1,6 +1,7 @@
 package com.wonkglorg.minecraft.config.lang;
 
 import com.wonkglorg.minecraft.config.LangManager;
+import com.wonkglorg.minecraft.config.lang.parser.ConditionalParser;
 import com.wonkglorg.minecraft.config.lang.parser.MathParser;
 import com.wonkglorg.minecraft.config.lang.parser.bool.BooleanConditionParser;
 import com.wonkglorg.minecraft.config.types.LangConfig;
@@ -438,106 +439,7 @@ public class LangRequest{
 	 * @return resolved string
 	 */
 	private String applyConditionals(String input) {
-		int start = input.indexOf("[if:");
-		
-		if(start == -1){
-			return input;
-		}
-		
-		int conditionEnd = input.indexOf("]", start);
-		
-		if(conditionEnd == -1){
-			return input;
-		}
-		
-		String condition = input.substring(start + 4, conditionEnd);
-		
-		int depth = 1;
-		int pos = conditionEnd + 1;
-		
-		int elsePos = -1;
-		int endPos = -1;
-		
-		while(pos < input.length()){
-			
-			int nextIf = input.indexOf("[if:", pos);
-			int nextElse = input.indexOf("[else]", pos);
-			int nextEnd = input.indexOf("[/if]", pos);
-			
-			int next = minPositive(nextIf, nextElse, nextEnd);
-			
-			if(next == -1){
-				break;
-			}
-			
-			if(next == nextIf){
-				depth++;
-				pos = nextIf + 4;
-			} else if(next == nextEnd){
-				depth--;
-				
-				if(depth == 0){
-					endPos = nextEnd;
-					break;
-				}
-				
-				pos = nextEnd + 5;
-			} else {
-				if(depth == 1 && elsePos == -1){
-					elsePos = nextElse;
-				}
-				
-				pos = nextElse + 6;
-			}
-		}
-		
-		if(endPos == -1){
-			return input;
-		}
-		
-		String trueBranch;
-		String falseBranch;
-		
-		if(elsePos == -1){
-			trueBranch = input.substring(conditionEnd + 1, endPos);
-			falseBranch = "";
-		} else {
-			trueBranch = input.substring(conditionEnd + 1, elsePos);
-			falseBranch = input.substring(elsePos + 6, endPos);
-		}
-		
-		boolean result;
-		
-		try{
-			result = evaluateCondition(condition);
-		} catch(Exception ex){
-			logger.warning("Failed conditional '" + condition + "': " + ex.getMessage());
-			result = false;
-		}
-		
-		String replacement = result ? trueBranch : falseBranch;
-		
-		replacement = applyConditionals(replacement);
-		
-		String rebuilt = input.substring(0, start) + replacement + input.substring(endPos + 5);
-		
-		return applyConditionals(rebuilt);
-	}
-	
-	private static int minPositive(int... values) {
-		int min = -1;
-		
-		for(int value : values){
-			if(value == -1){
-				continue;
-			}
-			
-			if(min == -1 || value < min){
-				min = value;
-			}
-		}
-		
-		return min;
+		return new ConditionalParser(this::evaluateCondition).parse(input);
 	}
 	
 	/**

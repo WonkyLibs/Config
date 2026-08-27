@@ -179,6 +179,14 @@ class LangRequestTest{
 		assertEquals("You do have 10 coins", request.toSingleStringResult());
 		request.replace("%coins%", 11);
 		assertEquals("You do not have 10 coins", request.toSingleStringResult());
+		
+		request = lang.request("condition.else-if");
+		request.replace("%coins%", 9);
+		assertEquals("You have less than 10 coins", request.toSingleStringResult());
+		request.replace("%coins%", 10);
+		assertEquals("You have exactly 10 coins", request.toSingleStringResult());
+		request.replace("%coins%", 11);
+		assertEquals("You have more than 10 coins", request.toSingleStringResult());
 	}
 	
 	@Test

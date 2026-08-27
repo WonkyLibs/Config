@@ -27,6 +27,7 @@ condition:
   equals: "You do [if:%coins% == 10][else]not [/if]have 10 coins"
   not-equals: "You do [if:%coins% != 10]not [else][/if]have 10 coins"
   equals-no-space: "You do [if:%coins%==10][else]not [/if]have 10 coins"
+  else-if: "You have [if:%coins%==10]exactly[else-if:%coins%>10]more than[else]less than[/if] 10 coins"
 math:
   add: "<math>1+1</math>"
   add-placeholder: "<math>1+%amount%</math>"
