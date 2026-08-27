@@ -152,6 +152,18 @@ public class LangRequest{
 	/**
 	 * Replaces the given value with its replacement
 	 */
+	public LangRequest replace(String value, Enum<?> replacement) {
+		if(replacement == null){
+			replacements.put(value, "");
+			return this;
+		}
+		replacements.put(value, replacement.toString());
+		return this;
+	}
+	
+	/**
+	 * Replaces the given value with its replacement
+	 */
 	public LangRequest replace(String value, boolean replacement) {
 		return replace(value, String.valueOf(replacement));
 	}
