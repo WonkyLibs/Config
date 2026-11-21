@@ -9,7 +9,10 @@ import lombok.Getter;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.JoinConfiguration;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -86,6 +89,10 @@ public class LangRequest{
 	 * If the provided key is meant to be a config entry key or a literal value
 	 */
 	private boolean isLiteralKey = false;
+	/**
+	 * if components without a style should be converted to a string.
+	 */
+	private boolean turnUnstyledComponentsIntoStrings = true;
 	
 	public LangRequest(LangManager langManager, Locale locale, String key, String defaultValue) {
 		logger = langManager.getLogger();
@@ -128,6 +135,14 @@ public class LangRequest{
 	}
 	
 	/**
+	 * if components without a style should be converted to a string.
+	 */
+	public LangRequest turnUnstyledComponentsToStrings(boolean value) {
+		this.turnUnstyledComponentsIntoStrings = value;
+		return this;
+	}
+	
+	/**
 	 * Replaces the given value with its replacement
 	 */
 	public LangRequest replace(String value, String replacement) {
@@ -145,8 +160,30 @@ public class LangRequest{
 		if(replacement == null){
 			return this;
 		}
+		
+		//if its plaintext put it in the string map directly, (this allows parent style inheritance when the component has no styling)
+		if(isPlainText(replacement)){
+			replacements.put(value, PlainTextComponentSerializer.plainText().serialize(replacement));
+			return this;
+		}
+		
 		componentReplacements.put(value, () -> replacement);
 		return this;
+	}
+	
+	/**
+	 * If the provided component is considered plaintext
+	 */
+	private static boolean isPlainText(Component component) {
+		if(!(component instanceof TextComponent text)){
+			return false;
+		}
+		
+		if(!component.style().equals(Style.empty())){
+			return false;
+		}
+		
+		return component.children().stream().allMatch(LangRequest::isPlainText);
 	}
 	
 	/**
@@ -316,9 +353,54 @@ public class LangRequest{
 	}
 	
 	/**
+	 * Converts any component into plain text that do not have any styling
+	 */
+	private void normalizePlainComponentReplacements(final String input) {
+		if (!turnUnstyledComponentsIntoStrings || componentReplacements.isEmpty()) {
+			return ;
+		}
+		
+		var iterator = componentReplacements.entrySet().iterator();
+		
+		while (iterator.hasNext()) {
+			var entry = iterator.next();
+			
+			String placeholder = entry.getKey();
+			
+			// Don't evaluate suppliers for placeholders that aren't present
+			if (!input.contains(placeholder)) {
+				//not in the input ignore.
+				continue;
+			}
+			
+			Component component = entry.getValue().get();
+			
+			if (component == null) {
+				replacements.put(placeholder, "");
+				iterator.remove();
+				continue;
+			}
+			
+			if (isPlainText(component)) {
+				String plainText = PlainTextComponentSerializer.plainText().serialize(component);
+				replacements.put(placeholder, MINI_MESSAGE.escapeTags(plainText));
+				
+				iterator.remove();
+			} else {
+				// Cache the result to not evaluate it again
+				entry.setValue(() -> component);
+			}
+		}
+		
+		//invalidate the pattern because component replacements might have changed
+		pattern = null;
+	}
+	
+	/**
 	 * Resolves any conditionals and placeholders in the input string (does not resolve component replacements)
 	 */
 	public String processRawResult(String toResolve) {
+		normalizePlainComponentReplacements(toResolve);
 		toResolve = applyPlaceHolders(toResolve);
 		toResolve = applyMath(toResolve);
 		return applyConditionals(toResolve);
